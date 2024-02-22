@@ -1,4 +1,4 @@
-package img.compose_tree
+package img.tree
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

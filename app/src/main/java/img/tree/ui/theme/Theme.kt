@@ -1,4 +1,4 @@
-package img.compose_tree.ui.theme
+package img.tree.ui.theme
 
 import android.app.Activity
 import android.os.Build

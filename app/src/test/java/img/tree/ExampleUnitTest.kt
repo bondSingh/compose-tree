@@ -1,4 +1,4 @@
-package img.compose_tree
+package img.tree
 
 import org.junit.Test
 

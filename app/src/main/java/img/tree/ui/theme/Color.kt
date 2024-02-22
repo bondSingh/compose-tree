@@ -1,4 +1,4 @@
-package img.compose_tree.ui.theme
+package img.tree.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
