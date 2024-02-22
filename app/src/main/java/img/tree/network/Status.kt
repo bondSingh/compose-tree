@@ -1,4 +1,4 @@
-package com.hellofresh.task2.api
+package img.tree.network
 
 enum class Status {
     SUCCESS,

@@ -9,7 +9,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
-    private const val BASE_URL = "https://ubique.img.ly/frontend-tha/"
 
     fun getRetrofit(context: Context): Retrofit {
         val interceptor = HttpLoggingInterceptor()
