@@ -4,12 +4,18 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,17 +25,15 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
-import img.tree.network.Status
+import androidx.lifecycle.viewmodel.compose.viewModel
 import img.tree.RetrofitInstance
 import img.tree.TAG
 import img.tree.TreeRepository
 import img.tree.ViewModelFactory
 import img.tree.models.TreeNode
 import img.tree.network.TreeAPIService
+import img.tree.randomColor
 import img.tree.ui.theme.Compose_TreeTheme
-import androidx.lifecycle.viewmodel.compose.viewModel
-import img.tree.network.Resource
-
 import img.tree.vm.TreeViewModel
 
 class MainActivity : ComponentActivity() {
@@ -44,7 +48,7 @@ class MainActivity : ComponentActivity() {
         val treeRepository = TreeRepository(treeAPIService)
         treeViewModel =
             ViewModelProvider(this, ViewModelFactory(treeRepository))[TreeViewModel::class.java]
-        observeAndUpdateTree()
+        //observeAndUpdateTree()
 
         if (!treeViewModel.treeState.isInitialized) {
             treeViewModel.fetchTreeData()
@@ -64,7 +68,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun observeAndUpdateTree() {
+    /*private fun observeAndUpdateTree() {
         treeViewModel.treeState.observe(this) {
             it?.let { resource ->
                 when (resource.status) {
@@ -90,45 +94,48 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
+    }*/
 }
 
 @Composable
 fun MyApp() {
     val viewModel: TreeViewModel = viewModel()
-    val treeState : Resource<List<TreeNode>> by viewModel.treeState.observeAsState(Resource(Status.LOADING, listOf(), "Loading"))
+    val treeState: List<TreeNode> by viewModel.treeState.observeAsState(emptyList())
 
-
-    treeState.data?.let { TreeView(treeState = it, viewModel ) }
+    TreeView(treeState = treeState, onItemClick = { Log.d(TAG, "Item Clicked") })
     //TreeView(treeState = treeState, viewModel )
 }
 
 
-
-
 @Composable
-fun TreeView(treeState: List<TreeNode>, viewModel: TreeViewModel) {
-    Column {
+fun TreeView(treeState: List<TreeNode>, onItemClick: (String) -> Unit) {
+    Box(modifier = Modifier.fillMaxSize()) {
+
         LazyColumn {
             items(treeState) { node ->
-                TreeNodeItem(node, viewModel)
+                TreeNodeItem(node, onItemClick)
             }
-        }
-        Button(
-            onClick = { viewModel.fetchTreeData() },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text("Fetch Data")
         }
     }
 }
 
+
 @Composable
-fun TreeNodeItem(node: TreeNode, viewModel: TreeViewModel) {
-    Column {
-        Text(node.label)
-        if (node.children.isNotEmpty()) {
-            TreeView(treeState = node.children, viewModel = viewModel)
+fun TreeNodeItem(node: TreeNode, onItemClick: (String) -> Unit) {
+    Column(
+        modifier = Modifier
+            .padding(start = 4.dp * node.level)
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .height(maxOf((50 * node.offspringCount), 50).dp)
+            .background(randomColor(node.level, isSystemInDarkTheme()))
+
+    ) {
+        Text(text = node.label, style = MaterialTheme.typography.headlineMedium)
+        if (node.children?.isNotEmpty() == true) {
+            TreeView(node.children, onItemClick)
+        } else {
+            Spacer(modifier = Modifier.height(10.dp))
         }
     }
 }
