@@ -22,7 +22,10 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -115,6 +118,9 @@ fun MyApp() {
     val viewModel: TreeViewModel = viewModel()
     val treeStateLiveData: TreeNode? by viewModel.treeState.observeAsState(null)
 
+    //var tree by remember { mutableStateOf(treeStateLiveData?.children) }
+
+
     if (treeStateLiveData != null && treeStateLiveData!!.children != null)
             TreeView(treeState = treeStateLiveData!!.children!!, onDeleteNode = {
             it.id?.let { it1 -> viewModel.removeNode(it1) }
@@ -148,7 +154,7 @@ fun TreeNodeItem(node: TreeNode, onDeleteNode: (TreeNode) -> Unit) {
             .background(randomColor(node.level, isSystemInDarkTheme()))
 
     ) {
-        var text by remember { mutableStateOf(TextFieldValue(node.label)) }
+        var text = node.label
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -169,13 +175,7 @@ fun TreeNodeItem(node: TreeNode, onDeleteNode: (TreeNode) -> Unit) {
                 onClick = { onDeleteNode(node) },
                 modifier = Modifier.background(Color.Transparent)
             ) {
-                Image(
-                    painter = painterResource(id = com.google.android.material.R.drawable.ic_m3_chip_close),
-                    contentDescription = "Delete Item",
-                    modifier = Modifier
-                        .size(36.dp)
-                        .padding(8.dp)
-                )
+                Icon(Icons.Default.Delete, contentDescription = "Delete")
             }
         }
 

@@ -10,7 +10,6 @@ import img.tree.TreeRepository
 import img.tree.models.TreeNode
 import img.tree.network.NoConnectivityException
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 class TreeViewModel(private val repository: TreeRepository) : ViewModel() {
     private val _treeStateLiveData = MutableLiveData<TreeNode>()
@@ -24,9 +23,6 @@ class TreeViewModel(private val repository: TreeRepository) : ViewModel() {
     fun removeNode(nodeId: String) {
         viewModelScope.launch {
             _treeStateLiveData.value = repository.removeNode(treeNode = treeState.value, nodeId)
-            Log.d(TAG, _treeStateLiveData.value.toString())
-
-            //_treeStateLiveData.value = repository.fetchTreeData()
         }
     }
 
@@ -34,8 +30,6 @@ class TreeViewModel(private val repository: TreeRepository) : ViewModel() {
     fun fetchTreeData() {
         viewModelScope.launch {
             try {
-               // val tree = repository.fetchTreeData()
-                //_treeStateLiveData.value = tree
                 _treeStateLiveData.value = repository.fetchTreeData()
             } catch (noNet: NoConnectivityException) {
                 Log.d(TAG, "No Internet")
