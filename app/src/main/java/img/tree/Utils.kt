@@ -26,8 +26,8 @@ fun randomColor(level:Int, isInDarkMode: Boolean): Color {
         Color(0xFFc5e1a5)
     )
     return if(isInDarkMode) {
-        darkColors.random()
+        darkColors[darkColors.lastIndex/level]
     } else{
-        lightColors.random()
+        lightColors[lightColors.lastIndex/level]
     }
 }

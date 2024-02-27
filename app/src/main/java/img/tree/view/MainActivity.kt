@@ -113,12 +113,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyApp() {
     val viewModel: TreeViewModel = viewModel()
-    val treeStateLiveData: List<TreeNode> by viewModel.treeState.observeAsState(emptyList())
+    val treeStateLiveData: TreeNode? by viewModel.treeState.observeAsState(null)
 
-    TreeView(treeState = treeStateLiveData, onDeleteNode = {
-        it.id?.let { it1 -> viewModel.removeNode(it1) }
-        Log.d(TAG, "Item Delete::>> ")
-    })
+    if (treeStateLiveData != null && treeStateLiveData!!.children != null)
+            TreeView(treeState = treeStateLiveData!!.children!!, onDeleteNode = {
+            it.id?.let { it1 -> viewModel.removeNode(it1) }
+            Log.d(TAG, "Item Delete::>> ")
+        })
     //TreeView(treeState = treeState, viewModel )
 }
 
