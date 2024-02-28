@@ -1,6 +1,7 @@
 package img.tree
 
 import android.util.Log
+import img.tree.models.ApiTreeNode
 import img.tree.models.TreeNode
 import img.tree.network.ERROR_TYPE.*
 import img.tree.network.NoConnectivityException
@@ -21,7 +22,7 @@ class TreeRepositoryImpl(private val treeAPIService: TreeAPIService) : TreeRepos
         try {
             if (serverResponse == null) {
                 val response = treeAPIService.fetchTreeData()
-                val treeRes = buildTree(response)
+                val treeRes = buildApiTree(response)
                 serverResponse = Resource.success(
                     TreeNode(
                         "rootNode", treeRes, UUID.randomUUID().toString(), 0, 0
@@ -38,6 +39,7 @@ class TreeRepositoryImpl(private val treeAPIService: TreeAPIService) : TreeRepos
         return@withContext serverResponse
     }
 
+
     private fun buildTree(nodes: List<TreeNode>, parentLevel: Int = 0): List<TreeNode> {
         return nodes.map { node ->
             val level = parentLevel + 1
@@ -52,16 +54,46 @@ class TreeRepositoryImpl(private val treeAPIService: TreeAPIService) : TreeRepos
             )
         }
     }
-
     private fun getAllChildren(node: TreeNode): Int {
         var childrenCount = 0
         val queue: Queue<TreeNode> = LinkedList()
         queue.add(node)
-
         while (!queue.isEmpty()) {
-            val node = queue.poll()
-            childrenCount += node.children?.size ?: 0
-            node.children?.forEach { queue.add(it) }
+            val headNode = queue.poll()
+            childrenCount += headNode?.children?.size ?: 0
+            if (headNode != null) {
+                headNode.children?.forEach { queue.add(it) }
+            }
+        }
+        return childrenCount + 1
+    }
+
+    private fun buildApiTree(nodes: List<ApiTreeNode>, parentLevel: Int = 0): List<TreeNode> {
+        return nodes.map { node ->
+            val level = parentLevel + 1
+            val children = node.children?.let { buildApiTree(it, level) }
+            val childrenCount = getApiAllChildren(node)
+            val nodeId = node.id ?: UUID.randomUUID()
+            TreeNode(
+                id = nodeId.toString(),
+                label = node.label,
+                children = children,
+                level = level,
+                offspringCount = childrenCount
+            )
+        }
+    }
+
+    private fun getApiAllChildren(node: ApiTreeNode): Int {
+        var childrenCount = 0
+        val queue: Queue<ApiTreeNode> = LinkedList()
+        queue.add(node)
+        while (!queue.isEmpty()) {
+            val headNode = queue.poll()
+            childrenCount += headNode?.children?.size ?: 0
+            if (headNode != null) {
+                headNode.children?.forEach { queue.add(it) }
+            }
         }
         return childrenCount + 1
     }

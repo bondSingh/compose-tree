@@ -11,16 +11,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +33,7 @@ import img.tree.randomColor
 @Composable
 fun TreeView(treeState: List<TreeNode>, onDeleteNode: (TreeNode) -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
+        //val treeState = remember { mutableStateOf(treeState) }
 
         LazyColumn {
             items(treeState) { node ->
@@ -55,26 +55,19 @@ fun TreeNodeItem(node: TreeNode, onDeleteNode: (TreeNode) -> Unit) {
             .background(randomColor(node.level, isSystemInDarkTheme()))
 
     ) {
-        var text = node.label
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .height(50.dp)
         ) {
             val localStyle = LocalTextStyle.current
             val mergedStyle = localStyle.merge(TextStyle(color = LocalContentColor.current, fontSize = 22.sp))
-            BasicTextField(
-                value = text, onValueChange = {
-                    text = it
-                }, textStyle = mergedStyle,
-
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .wrapContentHeight()
-                    .background(Color.Transparent)
+            Text(
+                text = node.label,
+                style = mergedStyle
             )
-
             Button(
                 onClick = { onDeleteNode(node) },
                 modifier = Modifier.background(Color.Transparent)
