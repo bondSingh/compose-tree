@@ -4,12 +4,12 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
+import img.compose_tree.R
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
 
-class NetworkInterceptor(context: Context) : Interceptor {
-
+class NetworkInterceptor(private val context: Context) : Interceptor {
     private var isConnected = false
     init {
 
@@ -31,7 +31,7 @@ class NetworkInterceptor(context: Context) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         if (!isConnected) {
-            throw NoConnectivityException("No internet connection")
+            throw NoConnectivityException(context.getString(R.string.no_internet_connection))
         }
         return chain.proceed(chain.request())
     }

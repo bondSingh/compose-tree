@@ -1,5 +1,7 @@
 package img.tree
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.ui.graphics.Color
 
 fun randomColor(level:Int, isInDarkMode: Boolean): Color {
@@ -29,5 +31,13 @@ fun randomColor(level:Int, isInDarkMode: Boolean): Color {
         darkColors[darkColors.lastIndex/level]
     } else{
         lightColors[lightColors.lastIndex/level]
+    }
+}
+
+fun handleErrors(context: Context, error: String? = null) {
+    if (error.isNullOrEmpty()){
+        Toast.makeText(context, "Something went wrong!!", Toast.LENGTH_LONG).show()
+    } else{
+        Toast.makeText(context, error, Toast.LENGTH_LONG).show()
     }
 }

@@ -2,31 +2,34 @@ package img.tree
 
 import android.util.Log
 import img.tree.models.TreeNode
+import img.tree.network.ERROR_TYPE.*
+import img.tree.network.NoConnectivityException
+import img.tree.network.Resource
 import img.tree.network.TreeAPIService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 import java.util.UUID
 
 class TreeRepositoryImpl(private val treeAPIService: TreeAPIService) : TreeRepository {
-    private var _treeData: TreeNode? = null
+    private var serverResponse: Resource<TreeNode?>? = null
 
-    override suspend fun fetchTreeData(): TreeNode? {
+    override suspend fun fetchTreeData(): Resource<TreeNode?>? = withContext(Dispatchers.IO){
         try {
-            if (_treeData == null) {
-                var response = treeAPIService.fetchTreeData()
-                var treeRes = buildTree(response)
-                _treeData = TreeNode("rootNode", treeRes, UUID.randomUUID().toString(), 0, 0)
+            if (serverResponse == null ) {
+                val response = treeAPIService.fetchTreeData()
+                val treeRes = buildTree(response)
+                serverResponse = Resource.success(TreeNode("rootNode", treeRes, UUID.randomUUID().toString(), 0, 0))
             }
-
-            //_treeData =  buildTree(tree)
+        } catch (noNet: NoConnectivityException) {
+            serverResponse = Resource.error(errorType = NO_NETWORK, data = null)
         } catch (e: IOException) {
-            // Network error
-            emptyList<TreeNode>()
+            serverResponse = Resource.error(errorType = SERVER_ERROR, data = null)
         } catch (e: HttpException) {
-            // HTTP error (e.g., 404)
-            emptyList<TreeNode>()
+            serverResponse = Resource.error(errorType = SERVER_ERROR, data = null)
         }
-        return _treeData
+        return@withContext serverResponse
     }
 
     private fun buildTree(nodes: List<TreeNode>, parentLevel: Int = 0): List<TreeNode> {
@@ -87,6 +90,6 @@ class TreeRepositoryImpl(private val treeAPIService: TreeAPIService) : TreeRepos
 
 
 interface TreeRepository {
-    suspend fun fetchTreeData(): TreeNode?
+    suspend fun fetchTreeData(): Resource<TreeNode?>?
     suspend fun removeNode(treeNode: TreeNode?, nodeId: String): TreeNode?
 }
