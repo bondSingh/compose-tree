@@ -76,8 +76,9 @@ class TreeRepository @Inject constructor(private val treeAPIService: TreeAPIServ
         entryData = try {
             Log.d(TAG, "Making API Call")
             val response = treeAPIService.fetchEntryData(id)
-            if (response.isSuccessful){
-                Resource.success(response.body())
+            if (response.isSuccessful && response.body() != null){
+                val responseTransformed = transformEntryData(response.body()!!)
+                Resource.success(responseTransformed)
             } else{
                 Resource.error(data = null, errorType = NOT_FOUND)
             }
@@ -87,5 +88,7 @@ class TreeRepository @Inject constructor(private val treeAPIService: TreeAPIServ
 
         return entryData
     }
+
+
 
 }

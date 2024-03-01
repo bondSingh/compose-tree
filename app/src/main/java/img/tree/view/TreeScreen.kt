@@ -18,16 +18,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import img.tree.models.TreeNode
 import img.tree.randomColor
 
@@ -73,13 +68,7 @@ fun TreeNodeItem(node: TreeNode, onDeleteNode: (TreeNode) -> Unit, onItemClick: 
                 .fillMaxWidth()
                 .height(50.dp)
         ) {
-            val localStyle = LocalTextStyle.current
-            val mergedStyle =
-                localStyle.merge(TextStyle(color = LocalContentColor.current, fontSize = 22.sp))
-            Text(
-                text = node.label,
-                style = mergedStyle
-            )
+            BodyText(text = node.label)
             Button(
                 onClick = { onDeleteNode(node) },
                 modifier = Modifier.background(Color.Transparent)

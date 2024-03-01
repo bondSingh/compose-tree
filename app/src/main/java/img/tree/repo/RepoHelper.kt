@@ -1,9 +1,12 @@
 package img.tree.repo
 
 import img.tree.LOCAL_ID_MARKER
+import img.tree.models.ApiEntryData
 import img.tree.models.ApiTreeNode
 import img.tree.models.TreeNode
+import java.text.SimpleDateFormat
 import java.util.LinkedList
+import java.util.Locale
 import java.util.Queue
 import java.util.UUID
 
@@ -63,4 +66,18 @@ private fun getApiAllChildren(node: ApiTreeNode): Int {
         }
     }
     return childrenCount + 1
+}
+
+fun transformEntryData(entryData: ApiEntryData): ApiEntryData {
+        return entryData.copy(
+            createdAt = formattedDate(entryData.createdAt),
+            lastModifiedAt = formattedDate(entryData.lastModifiedAt)
+        )
+}
+
+private fun formattedDate(serverDate: String): String {
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+    val date = inputFormat.parse(serverDate)
+    val outputFormat = SimpleDateFormat("MMM dd, yyyy HH:mm:ss", Locale.getDefault())
+    return  outputFormat.format(date)
 }
