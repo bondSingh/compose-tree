@@ -28,6 +28,11 @@ enum class ERROR_TYPE {
         override fun errorMessage(): Int {
             return R.string.empty_response
         }
+    },
+    NOT_FOUND {
+        override fun errorMessage(): Int {
+            return R.string.records_not_found
+        }
     };
     abstract fun errorMessage(): Int
 }

@@ -7,6 +7,7 @@ import dagger.hilt.android.components.ActivityRetainedComponent
 import img.tree.TAG
 import img.tree.models.ApiEntryData
 import img.tree.models.TreeNode
+import img.tree.network.ERROR_TYPE.NOT_FOUND
 import img.tree.network.ERROR_TYPE.NO_NETWORK
 import img.tree.network.ERROR_TYPE.SERVER_ERROR
 import img.tree.network.NoConnectivityException
@@ -23,27 +24,29 @@ import javax.inject.Inject
 @InstallIn(ActivityRetainedComponent::class)
 class TreeRepository @Inject constructor(private val treeAPIService: TreeAPIService) {
 
-    private var serverResponse: Resource<TreeNode?>? = null
+    private var treeData: Resource<TreeNode?>? = null
+
+    private var entryData: Resource<ApiEntryData?>? = null
 
     suspend fun fetchTreeData(): Resource<TreeNode?>? = withContext(Dispatchers.IO) {
         try {
-            if (serverResponse == null) {
+            if (treeData == null) {
                 val response = treeAPIService.fetchTreeData()
                 val treeRes = buildApiTree(response)
-                serverResponse = Resource.success(
+                treeData = Resource.success(
                     TreeNode(
                         "rootNode", treeRes, UUID.randomUUID().toString(), 0, 0
                     )
                 )
             }
         } catch (noNet: NoConnectivityException) {
-            serverResponse = Resource.error(errorType = NO_NETWORK, data = null)
+            treeData = Resource.error(errorType = NO_NETWORK, data = null)
         } catch (e: IOException) {
-            serverResponse = Resource.error(errorType = SERVER_ERROR, data = null)
+            treeData = Resource.error(errorType = SERVER_ERROR, data = null)
         } catch (e: HttpException) {
-            serverResponse = Resource.error(errorType = SERVER_ERROR, data = null)
+            treeData = Resource.error(errorType = SERVER_ERROR, data = null)
         }
-        return@withContext serverResponse
+        return@withContext treeData
     }
 
 
@@ -69,9 +72,20 @@ class TreeRepository @Inject constructor(private val treeAPIService: TreeAPIServ
         }
     }
 
-    suspend fun getEntryData(id: String): Resource<ApiEntryData?> {
-        Log.d(TAG, "getting entry data")
-        return Resource.loading(null)
+    suspend fun getEntryData(id: String): Resource<ApiEntryData?>? {
+        entryData = try {
+            Log.d(TAG, "Making API Call")
+            val response = treeAPIService.fetchEntryData(id)
+            if (response.isSuccessful){
+                Resource.success(response.body())
+            } else{
+                Resource.error(data = null, errorType = NOT_FOUND)
+            }
+        } catch (exception :Exception){
+            Resource.error(data = null, errorType = SERVER_ERROR)
+        }
+
+        return entryData
     }
 
 }

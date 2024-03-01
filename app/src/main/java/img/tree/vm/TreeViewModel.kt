@@ -42,9 +42,9 @@ class TreeViewModel @Inject constructor(private val repository: TreeRepository) 
         }
     }
 
-    fun getEntryData(id: String){
-        viewModelScope.launch{
-            _entryLiveData.value =repository.getEntryData(id)
+    fun getEntryData(id: String) {
+        viewModelScope.launch {
+            _entryLiveData.value = repository.getEntryData(id)
         }
     }
 }

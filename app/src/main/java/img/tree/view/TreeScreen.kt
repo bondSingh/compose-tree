@@ -59,7 +59,8 @@ fun TreeNodeItem(node: TreeNode, onDeleteNode: (TreeNode) -> Unit, onItemClick: 
             .height(maxOf((50 * node.offspringCount), 50).dp)
             .background(randomColor(node.level, isSystemInDarkTheme()))
             .clickable {
-                if (node.id != null) {
+                //setting Clickable for only leaf node
+                if ((node.id != null) && node.children.isNullOrEmpty()) {
                     onItemClick(node.id)
                 }
             }

@@ -1,5 +1,6 @@
 package img.tree.repo
 
+import img.tree.LOCAL_ID_MARKER
 import img.tree.models.ApiTreeNode
 import img.tree.models.TreeNode
 import java.util.LinkedList
@@ -39,7 +40,7 @@ fun buildApiTree(nodes: List<ApiTreeNode>, parentLevel: Int = 0): List<TreeNode>
         val level = parentLevel + 1
         val children = node.children?.let { buildApiTree(it, level) }
         val childrenCount = getApiAllChildren(node)
-        val nodeId = node.id ?: UUID.randomUUID().toString()
+        val nodeId = node.id ?: (LOCAL_ID_MARKER + UUID.randomUUID().toString())
         TreeNode(
             id = nodeId,
             label = node.label,
