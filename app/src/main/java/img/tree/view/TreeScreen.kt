@@ -1,6 +1,7 @@
 package img.tree.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,13 +32,17 @@ import img.tree.models.TreeNode
 import img.tree.randomColor
 
 @Composable
-fun TreeView(treeState: List<TreeNode>, onDeleteNode: (TreeNode) -> Unit) {
+fun TreeView(
+    treeState: List<TreeNode>,
+    onDeleteNode: (TreeNode) -> Unit,
+    onItemClick: (String) -> Unit
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         //val treeState = remember { mutableStateOf(treeState) }
 
         LazyColumn {
             items(treeState) { node ->
-                TreeNodeItem(node, onDeleteNode)
+                TreeNodeItem(node, onDeleteNode, onItemClick)
             }
         }
     }
@@ -45,7 +50,7 @@ fun TreeView(treeState: List<TreeNode>, onDeleteNode: (TreeNode) -> Unit) {
 
 
 @Composable
-fun TreeNodeItem(node: TreeNode, onDeleteNode: (TreeNode) -> Unit) {
+fun TreeNodeItem(node: TreeNode, onDeleteNode: (TreeNode) -> Unit, onItemClick: (String) -> Unit) {
     Column(
         modifier = Modifier
             .padding(start = 4.dp * node.level)
@@ -53,6 +58,11 @@ fun TreeNodeItem(node: TreeNode, onDeleteNode: (TreeNode) -> Unit) {
             .wrapContentHeight()
             .height(maxOf((50 * node.offspringCount), 50).dp)
             .background(randomColor(node.level, isSystemInDarkTheme()))
+            .clickable {
+                if (node.id != null) {
+                    onItemClick(node.id)
+                }
+            }
 
     ) {
         Row(
@@ -63,7 +73,8 @@ fun TreeNodeItem(node: TreeNode, onDeleteNode: (TreeNode) -> Unit) {
                 .height(50.dp)
         ) {
             val localStyle = LocalTextStyle.current
-            val mergedStyle = localStyle.merge(TextStyle(color = LocalContentColor.current, fontSize = 22.sp))
+            val mergedStyle =
+                localStyle.merge(TextStyle(color = LocalContentColor.current, fontSize = 22.sp))
             Text(
                 text = node.label,
                 style = mergedStyle
@@ -77,7 +88,7 @@ fun TreeNodeItem(node: TreeNode, onDeleteNode: (TreeNode) -> Unit) {
         }
 
         if (node.children?.isNotEmpty() == true) {
-            TreeView(node.children, onDeleteNode)
+            TreeView(node.children, onDeleteNode, onItemClick)
         }
     }
 }
