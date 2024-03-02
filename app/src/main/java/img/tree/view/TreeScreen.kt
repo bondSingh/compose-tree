@@ -18,11 +18,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import img.compose_tree.R
@@ -36,8 +37,6 @@ fun TreeView(
     onItemClick: (String) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        //val treeState = remember { mutableStateOf(treeState) }
-
         LazyColumn {
             items(treeState) { node ->
                 TreeNodeItem(node, onDeleteNode, onItemClick)
@@ -68,6 +67,8 @@ fun TreeNodeItem(node: TreeNode, onDeleteNode: (TreeNode) -> Unit, onItemClick: 
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
+                .padding(0.dp, 0.dp, 8.dp, 0.dp)
+
                 .fillMaxWidth()
                 .height(50.dp)
         ) {
@@ -77,9 +78,12 @@ fun TreeNodeItem(node: TreeNode, onDeleteNode: (TreeNode) -> Unit, onItemClick: 
             }
             Button(
                 onClick = { onDeleteNode(node) },
-                modifier = Modifier.background(Color.Transparent)
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)
             ) {
-                Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete_entry))
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = stringResource(R.string.delete_entry)
+                )
             }
         }
 
