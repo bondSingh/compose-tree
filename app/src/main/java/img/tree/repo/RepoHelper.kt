@@ -1,6 +1,7 @@
 package img.tree.repo
 
-import img.tree.LOCAL_ID_MARKER
+import img.tree.APP_DATE_FORMAT
+import img.tree.INPUT_DATE_FORMAT
 import img.tree.models.ApiEntryData
 import img.tree.models.ApiTreeNode
 import img.tree.models.TreeNode
@@ -43,7 +44,7 @@ fun buildApiTree(nodes: List<ApiTreeNode>, parentLevel: Int = 0): List<TreeNode>
         val level = parentLevel + 1
         val children = node.children?.let { buildApiTree(it, level) }
         val childrenCount = getApiAllChildren(node)
-        val nodeId = node.id ?: (LOCAL_ID_MARKER + UUID.randomUUID().toString())
+        val nodeId = node.id ?: (UUID.randomUUID().toString())
         TreeNode(
             id = nodeId,
             label = node.label,
@@ -76,8 +77,8 @@ fun transformEntryData(entryData: ApiEntryData): ApiEntryData {
 }
 
 private fun formattedDate(serverDate: String): String {
-    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+    val inputFormat = SimpleDateFormat(INPUT_DATE_FORMAT, Locale.getDefault())
     val date = inputFormat.parse(serverDate)
-    val outputFormat = SimpleDateFormat("MMM dd, yyyy HH:mm:ss", Locale.getDefault())
+    val outputFormat = SimpleDateFormat(APP_DATE_FORMAT, Locale.getDefault())
     return  outputFormat.format(date)
 }

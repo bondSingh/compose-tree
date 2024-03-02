@@ -16,13 +16,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import img.compose_tree.R
 import img.tree.models.TreeNode
 import img.tree.randomColor
 
@@ -69,11 +72,14 @@ fun TreeNodeItem(node: TreeNode, onDeleteNode: (TreeNode) -> Unit, onItemClick: 
                 .height(50.dp)
         ) {
             BodyText(text = node.label)
+            if ((node.id != null) && node.children.isNullOrEmpty()) {
+                Icon(Icons.Default.Info, contentDescription = stringResource(R.string.get_details))
+            }
             Button(
                 onClick = { onDeleteNode(node) },
                 modifier = Modifier.background(Color.Transparent)
             ) {
-                Icon(Icons.Default.Delete, contentDescription = "Delete")
+                Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete_entry))
             }
         }
 

@@ -13,4 +13,6 @@
     <string name="lastmodifiedby">Last Modified By : %1$s</string>
     <string name="description">Description : %1$s</string>
     <string name="id">id :%1$s</string>
+    <string name="get_details">Get Details</string>
+    <string name="delete_entry">Delete Entry</string>
 </resources>
