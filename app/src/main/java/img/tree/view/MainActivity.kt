@@ -24,19 +24,12 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-     //private lateinit var treeViewModel: TreeViewModel
-
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Initialize ViewModel
-        //val treeAPIService: TreeAPIService =
-          //  RetrofitInstance.getRetrofit().create(TreeAPIService::class.java)
-        //val treeRepository = TreeRepository(treeAPIService)
         (application as TreeApplication).treeComponent.inject(this)
-        //treeViewModel = ViewModelProvider(this, viewModelFactory)[TreeViewModel::class.java]
 
         setContent {
             Compose_TreeTheme {
@@ -47,10 +40,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-
-        /*if (!treeViewModel.treeState.isInitialized) {
-            treeViewModel.fetchTreeData()
-        }*/
     }
 }
 
@@ -59,8 +48,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyApp() {
     val navController = rememberNavController()
-
-
     Scaffold(
         topBar = { TopBarView() },
         content = { paddingValues ->

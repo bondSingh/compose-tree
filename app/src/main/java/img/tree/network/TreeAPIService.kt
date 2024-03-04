@@ -8,7 +8,7 @@ import retrofit2.http.Path
 
 interface TreeAPIService {
     @GET("data.json")
-    suspend fun fetchTreeData(): List<ApiTreeNode>
+    suspend fun fetchTreeData(): Response<List<ApiTreeNode>>
 
     @GET("entries/{id}.json")
     suspend fun fetchEntryData(@Path("id") id: String): Response<ApiEntryData>

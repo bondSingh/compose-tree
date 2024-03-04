@@ -32,7 +32,7 @@ class TreeRepository @Inject constructor(private val treeAPIService: TreeAPIServ
         try {
             if (treeData == null) {
                 val response = treeAPIService.fetchTreeData()
-                val treeRes = buildApiTree(response)
+                val treeRes = response.body()?.let { buildApiTree(it) }
                 treeData = Resource.success(
                     TreeNode(
                         "rootNode", treeRes, UUID.randomUUID().toString(), 0, 0
@@ -76,7 +76,7 @@ class TreeRepository @Inject constructor(private val treeAPIService: TreeAPIServ
         entryData = try {
             Log.d(TAG, "Making API Call")
             val response = treeAPIService.fetchEntryData(id)
-            if (response.isSuccessful && response.body() != null){
+            if (response.isSuccessful && response.body().toString().isNotEmpty() ){
                 val responseTransformed = transformEntryData(response.body()!!)
                 Resource.success(responseTransformed)
             } else{
